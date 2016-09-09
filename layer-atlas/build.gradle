@@ -29,7 +29,7 @@ android {
 }
 
 repositories {
-    maven { url "/Users/work/.gitRepos/layerhq/releases-android/releases/" }
+    maven { url "https://raw.githubusercontent.com/layerhq/releases-android/master/releases/" }
     jcenter()
 }
 

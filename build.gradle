@@ -14,6 +14,5 @@ allprojects {
     repositories {
         jcenter()
         maven { url "https://raw.githubusercontent.com/layerhq/releases-android/master/releases/" }
-        maven { url "/Users/work/.gitRepos/layerhq/releases-android/releases/" }
     }
 }

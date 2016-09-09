@@ -30,6 +30,7 @@ import com.layer.atlas.util.views.MaxHeightScrollView;
 import com.layer.sdk.LayerClient;
 import com.layer.sdk.messaging.Conversation;
 import com.layer.sdk.messaging.Identity;
+import com.layer.sdk.query.CompoundPredicate;
 import com.layer.sdk.query.Predicate;
 import com.layer.sdk.query.Query;
 import com.layer.sdk.query.RecyclerViewController;
@@ -572,10 +573,9 @@ public class AtlasAddressBar extends LinearLayout {
             if (selectedParticipants.isEmpty()) {
                 builder.predicate(new Predicate(Conversation.Property.PARTICIPANT_COUNT, Predicate.Operator.GREATER_THAN, 2));
             } else {
-                // TODO - This needs to support identities
-//                builder.predicate(new CompoundPredicate(CompoundPredicate.Type.AND,
-//                        new Predicate(Conversation.Property.PARTICIPANT_COUNT, Predicate.Operator.GREATER_THAN, 2),
-//                        new Predicate(Conversation.Property.PARTICIPANTS, Predicate.Operator.IN, selectedParticipants)));
+                builder.predicate(new CompoundPredicate(CompoundPredicate.Type.AND,
+                        new Predicate(Conversation.Property.PARTICIPANT_COUNT, Predicate.Operator.GREATER_THAN, 2),
+                        new Predicate(Conversation.Property.PARTICIPANTS, Predicate.Operator.IN, selectedParticipants)));
             }
             mQueryController.setQuery(builder.build()).execute();
         }
