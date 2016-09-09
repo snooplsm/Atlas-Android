@@ -16,6 +16,11 @@ public class IdentityDisplayNameComparator implements Comparator<Identity> {
                 return -1;
             }
         }
+
+        if (rhs.getDisplayName() == null) {
+            return 1;
+        }
+
         return lhs.getDisplayName().compareTo(rhs.getDisplayName());
     }
 }

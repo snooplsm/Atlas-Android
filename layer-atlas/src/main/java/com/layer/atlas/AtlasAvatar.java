@@ -7,6 +7,7 @@ import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
+import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.view.View;
 import android.view.ViewGroup;
@@ -138,7 +139,7 @@ public class AtlasAvatar extends View {
             Queue<Identity> withoutAvatars = new LinkedList<>();
             for (Identity participant : mParticipants) {
                 if (participant == null) continue;
-                if (participant.getAvatarImageUrl() != null) {
+                if (!TextUtils.isEmpty(participant.getAvatarImageUrl())) {
                     withAvatars.add(participant);
                 } else {
                     withoutAvatars.add(participant);
@@ -157,7 +158,7 @@ public class AtlasAvatar extends View {
         }
 
         Diff diff = diff(mInitials.keySet(), mParticipants);
-        List<ImageTarget> toLoad = new ArrayList<ImageTarget>(mParticipants.size());
+        List<ImageTarget> toLoad = new ArrayList<>();
 
         List<ImageTarget> recyclableTargets = new ArrayList<ImageTarget>();
         for (Identity removed : diff.removed) {
@@ -173,15 +174,17 @@ public class AtlasAvatar extends View {
             if (added == null) return;
             mInitials.put(added, Util.getInitials(added));
 
-            final ImageTarget target;
-            if (recyclableTargets.isEmpty()) {
-                target = new ImageTarget(this);
-            } else {
-                target = recyclableTargets.remove(0);
+            if (!TextUtils.isEmpty(added.getAvatarImageUrl())) {
+                final ImageTarget target;
+                if (recyclableTargets.isEmpty()) {
+                    target = new ImageTarget(this);
+                } else {
+                    target = recyclableTargets.remove(0);
+                }
+                target.setUrl(added.getAvatarImageUrl());
+                mImageTargets.put(added, target);
+                toLoad.add(target);
             }
-            target.setUrl(added.getAvatarImageUrl());
-            mImageTargets.put(added, target);
-            toLoad.add(target);
         }
 
         // Cancel existing in case the size or anything else changed.
@@ -191,8 +194,10 @@ public class AtlasAvatar extends View {
             mInitials.put(existing, Util.getInitials(existing));
 
             ImageTarget existingTarget = mImageTargets.get(existing);
-            mPicasso.cancelRequest(existingTarget);
-            toLoad.add(existingTarget);
+            if (existingTarget != null) {
+                mPicasso.cancelRequest(existingTarget);
+                toLoad.add(existingTarget);
+            }
         }
         for (ImageTarget target : mPendingLoads) {
             mPicasso.cancelRequest(target);
